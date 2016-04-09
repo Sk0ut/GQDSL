@@ -2,22 +2,28 @@
 public interface GqdslParserTreeConstants
 {
   public int JJTSTART = 0;
-  public int JJTEXPRESSION = 1;
-  public int JJTADDITIVEEXPRESSION = 2;
-  public int JJTMULTIPLICATIVEEXPRESSION = 3;
-  public int JJTUNARYEXPRESSION = 4;
-  public int JJTIDENTIFIER = 5;
-  public int JJTINTEGER = 6;
+  public int JJTGRAPH = 1;
+  public int JJTQUERYRETURN = 2;
+  public int JJTQUERY = 3;
+  public int JJTQUERYEXPR = 4;
+  public int JJTSELECTVARS = 5;
+  public int JJTWHEREPARAMS = 6;
+  public int JJTPARAMLINE = 7;
+  public int JJTRELATION = 8;
+  public int JJTRELATIONVALUE = 9;
 
 
   public String[] jjtNodeName = {
     "Start",
-    "Expression",
-    "AdditiveExpression",
-    "MultiplicativeExpression",
-    "UnaryExpression",
-    "Identifier",
-    "Integer",
+    "Graph",
+    "QueryReturn",
+    "Query",
+    "QueryExpr",
+    "SelectVars",
+    "WhereParams",
+    "ParamLine",
+    "Relation",
+    "RelationValue",
   };
 }
-/* JavaCC - OriginalChecksum=6546cbbfef9670d68f76ff86b8e83230 (do not edit this line) */
+/* JavaCC - OriginalChecksum=0adb8970f93daf6154a8d531c0b7dbdd (do not edit this line) */

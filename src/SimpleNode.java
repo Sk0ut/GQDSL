@@ -55,7 +55,7 @@ class SimpleNode implements Node {
      toString(String), otherwise overriding toString() is probably all
      you need to do. */
 
-  public String toString() { return GqdslParserTreeConstants.jjtNodeName[id]; }
+  public String toString() { return GqdslParserTreeConstants.jjtNodeName[id] + ": " + (String) value ; }
   public String toString(String prefix) { return prefix + toString(); }
 
   /* Override this method if you want to customize how the node dumps

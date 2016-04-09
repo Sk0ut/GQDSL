@@ -17,11 +17,53 @@ public interface GqdslParserConstants {
   /** RegularExpression Id. */
   int OCTAL_LITERAL = 10;
   /** RegularExpression Id. */
-  int IDENTIFIER = 11;
+  int OPEN1 = 11;
   /** RegularExpression Id. */
-  int LETTER = 12;
+  int CLOSE1 = 12;
   /** RegularExpression Id. */
-  int DIGIT = 13;
+  int OPEN2 = 13;
+  /** RegularExpression Id. */
+  int CLOSE2 = 14;
+  /** RegularExpression Id. */
+  int SELECT = 15;
+  /** RegularExpression Id. */
+  int WHERE = 16;
+  /** RegularExpression Id. */
+  int COUNT = 17;
+  /** RegularExpression Id. */
+  int FILTER = 18;
+  /** RegularExpression Id. */
+  int DISTINCT = 19;
+  /** RegularExpression Id. */
+  int EDGE = 20;
+  /** RegularExpression Id. */
+  int PROPERTY = 21;
+  /** RegularExpression Id. */
+  int PROPERTY_VALUE = 22;
+  /** RegularExpression Id. */
+  int QUESTIONMARK = 23;
+  /** RegularExpression Id. */
+  int ALL = 24;
+  /** RegularExpression Id. */
+  int COLON = 25;
+  /** RegularExpression Id. */
+  int COMMA = 26;
+  /** RegularExpression Id. */
+  int START = 27;
+  /** RegularExpression Id. */
+  int END = 28;
+  /** RegularExpression Id. */
+  int QUERY = 29;
+  /** RegularExpression Id. */
+  int VAR = 30;
+  /** RegularExpression Id. */
+  int QUERY_VAR = 31;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 32;
+  /** RegularExpression Id. */
+  int LETTER = 33;
+  /** RegularExpression Id. */
+  int DIGIT = 34;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -39,17 +81,30 @@ public interface GqdslParserConstants {
     "<DECIMAL_LITERAL>",
     "<HEX_LITERAL>",
     "<OCTAL_LITERAL>",
+    "\"(\"",
+    "\")\"",
+    "\"{\"",
+    "\"}\"",
+    "\"SELECT\"",
+    "\"WHERE\"",
+    "\"COUNT\"",
+    "\"FILTER\"",
+    "\"DISTINCT\"",
+    "\"e\"",
+    "\"p\"",
+    "\"v\"",
+    "\"?\"",
+    "\"*\"",
+    "\":\"",
+    "\",\"",
+    "\"GQDSL_BEGIN\"",
+    "\"GQDSL_END\"",
+    "\"QUERY\"",
+    "<VAR>",
+    "<QUERY_VAR>",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
-    "\";\"",
-    "\"+\"",
-    "\"-\"",
-    "\"*\"",
-    "\"/\"",
-    "\"%\"",
-    "\"(\"",
-    "\")\"",
   };
 
 }

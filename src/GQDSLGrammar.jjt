@@ -3,43 +3,41 @@
  */options{  static = true;}PARSER_BEGIN(GqdslParser)
 public class GqdslParser{  public static void main(String args [])  {    System.out.println("Reading from standard input...");    System.out.print("Enter an expression like \"1+(2+3)*var;\" :");    new GqdslParser(System.in);    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("Thank you.");    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}
 
-TOKEN : /*Start and End Tokens*/
-{
-	< START : "GQDSL_BEGIN" >
-	< END : "GQDSL_END >
-
-	< QUERY : "QUERY" >
-
-	< VAR : [a-zA-Z$_]([a-zA-Z0-9$_])* >
-}
 
 TOKEN : /* Open and Closing Tokens */{
 	< OPEN1 : "(" >
-	< CLOSE1 : ")" >
-	< OPEN2 : "{" >
-	< CLOSE2 : "}" >
+	| < CLOSE1 : ")" >
+	| < OPEN2 : "{" >
+	| < CLOSE2 : "}" >
 
 }
 
 TOKEN : /* Query Keywords*/
 {
 	< SELECT : "SELECT" >
-	< WHERE : "WHERE" >
-	< COUNT : "COUNT" >
-	< FILTER : "FILTER" >
-	< DISTINCT : "DISTINCT" >
+	| < WHERE : "WHERE" >
+	| < COUNT : "COUNT" >
+	| < FILTER : "FILTER" >
+	| < DISTINCT : "DISTINCT" >
+	| < EDGE : "e" >
+	| < PROPERTY : "p" >
+	| < PROPERTY_VALUE : "v" >
+	| < QUESTIONMARK : "?" >
+	| < ALL : "*" >
+	| < COLON : ":" >
+	| < COMMA : "," >
 
-	< EDGE : "e" >
-	< PROPERTY : "p" >
-	< PROPERTY_VALUE : "v" >
-	< QUESTIONMARK : "?" >
-	< ALL : "*" >
-	< COLON : ":" >
-	< COMMA : "," >
+	| < START : "GQDSL_BEGIN" >
+	|  < END : "GQDSL_END" >
+
+	| < QUERY : "QUERY" >
+
+	| < VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
+	| < QUERY_VAR : "?" < VAR > > 
 	
-}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}SimpleNode Start() :{}{  BEGIN OPEN1 Graph() CLOSE1
+}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}SimpleNode Start() :{}{  < START > <OPEN1 > Graph() < CLOSE1 >
   (    Query()
-  )* END  {    return jjtThis;  }}
+  )* < END >  {    return jjtThis;  }}
 
 SimpleNode Graph() :{
   Token t;}
@@ -51,7 +49,7 @@ SimpleNode Graph() :{
     }
 }
 
-SimpleNode QueryVar(){  Token t;
+SimpleNode QueryReturn() :{  Token t;
 }
 {
 	t = < VAR >
@@ -66,14 +64,14 @@ SimpleNode Query() :{	Token t;
 {
 
   < QUERY > < OPEN1 >
-  QueryVar()
+  QueryReturn()
   < CLOSE1 > <COLON >
   QueryExpr()
   {	return jjtThis;
   }
 }
 
-SimpleNode QueryExpr(){
+SimpleNode QueryExpr() :{
 }
 {	< SELECT >
 	SelectVars()
@@ -84,28 +82,20 @@ SimpleNode QueryExpr(){
 	
 }
 
-SimpleNode SelectVars(){}
-{	(
+SimpleNode SelectVars() :{}
+{	(	  (
 	  < ALL > 	)
 	|
 	(	  (
-	  QueryVar()	  )+
-	)
+	  < QUERY_VAR >	  )+
+	))
 	{
 	  return jjtThis;
 	}
 }
+
 
-SimpleNode QueryVar()
-{}
-{	< QUESTIONMARK >
-	< VAR >
-	{
-	  return jjtThis;
-	}
-}
-
-SimpleNode WhereParams()
+SimpleNode WhereParams() :
 {
 }
 {
@@ -120,11 +110,11 @@ SimpleNode WhereParams()
 	}
 }
 
-SimpleNode ParamLine()
+SimpleNode ParamLine() :
 {
 }
 {
-	QueryVar()
+	< QUERY_VAR >
 	Relation()
 	RelationValue()
 	
@@ -134,7 +124,7 @@ SimpleNode ParamLine()
 
 }
 
-SimpleNode Relation()
+SimpleNode Relation() :
 {
 }
 {
@@ -147,13 +137,15 @@ SimpleNode Relation()
 	}
 }
 
-SimpleNode RelationValue()
+SimpleNode RelationValue() :
 {
+  Token t;
 }
 {
-	QueryVar() | < VAR >
-
+	(	  t = < QUERY_VAR > | t = < VAR >
+	)
 	{
+	  jjtThis.value = t.image;
 	  return jjtThis;
 	}
 }

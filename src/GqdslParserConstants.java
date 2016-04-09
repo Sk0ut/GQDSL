@@ -59,10 +59,14 @@ public interface GqdslParserConstants {
   /** RegularExpression Id. */
   int QUERY_VAR = 31;
   /** RegularExpression Id. */
-  int UNKNOWN = 32;
+  int JAVA_VAR = 32;
+  /** RegularExpression Id. */
+  int UNKNOWN = 33;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int INBRACES = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -98,6 +102,7 @@ public interface GqdslParserConstants {
     "\"QUERY\"",
     "<VAR>",
     "<QUERY_VAR>",
+    "<JAVA_VAR>",
     "<UNKNOWN>",
   };
 

@@ -13,7 +13,7 @@ TOKEN : /* Open and Closing Tokens */{
 }
 
 TOKEN : /* Query Keywords*/
-{
+{
 	< SELECT : "SELECT" >
 	| < WHERE : "WHERE" >
 	| < COUNT : "COUNT" >
@@ -35,9 +35,13 @@ TOKEN : /* Query Keywords*/
 	| < VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
 	| < QUERY_VAR : "?" < VAR > > 	
 }
+< INBRACES > TOKEN:{
+  < JAVA_VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >}
+
 < * > TOKEN:
 {	< UNKNOWN: ~[] >
-}  SimpleNode Start() :{}{  < START > <OPEN1 > Graph() < CLOSE1 >
+}  
+SimpleNode Start() :{}{  < START > <OPEN1 > Graph() < CLOSE1 >
   (    Query()
   )* < END >  {    return jjtThis;  }}
 
@@ -73,15 +77,10 @@ SimpleNode Query() :{	Token t;
   }
 }
 
-SimpleNode QueryExpr() :{
-}
+void QueryExpr() #void :{}
 {	< SELECT >
 	SelectVars()
 	< WHERE > <OPEN2 > WhereParams() < CLOSE2 >
-	{
-	  return jjtThis;
-	}
-	
 }
 
 SimpleNode SelectVars() :{

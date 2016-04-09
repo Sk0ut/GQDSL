@@ -17,7 +17,7 @@ TOKEN : /* Open and Closing Tokens */{
 }
 
 TOKEN : /* Query Keywords*/
-{
+{
 	< SELECT : "SELECT" >
 	| < WHERE : "WHERE" >
 	| < COUNT : "COUNT" >
@@ -39,9 +39,13 @@ TOKEN : /* Query Keywords*/
 	| < VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
 	| < QUERY_VAR : "?" < VAR > > 	
 }
+< INBRACES > TOKEN:{
+  < JAVA_VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >}
+
 < * > TOKEN:
 {	< UNKNOWN: ~[] >
-}  SimpleNode Start() :{/*@bgen(jjtree) Start */
+}  
+SimpleNode Start() :{/*@bgen(jjtree) Start */
   SimpleNode jjtn000 = new SimpleNode(JJTSTART);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -173,46 +177,10 @@ SimpleNode Query() :{/*@bgen(jjtree) Query */
 /*@egen*/
 }
 
-SimpleNode QueryExpr() :{/*@bgen(jjtree) QueryExpr */
-  SimpleNode jjtn000 = new SimpleNode(JJTQUERYEXPR);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/
-}
-{/*@bgen(jjtree) QueryExpr */
-        try {
-/*@egen*/	< SELECT >
+void QueryExpr()       :{}
+{	< SELECT >
 	SelectVars()
-	< WHERE > <OPEN2 > WhereParams() < CLOSE2 >/*@bgen(jjtree)*/
-        {
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-        }
-/*@egen*/
-	{
-	  return jjtn000;
-	}/*@bgen(jjtree)*/
-        } catch (Throwable jjte000) {
-          if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            throw (RuntimeException)jjte000;
-          }
-          if (jjte000 instanceof ParseException) {
-            throw (ParseException)jjte000;
-          }
-          throw (Error)jjte000;
-        } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-        }
-/*@egen*/
-	
+	< WHERE > <OPEN2 > WhereParams() < CLOSE2 >
 }
 
 SimpleNode SelectVars() :{/*@bgen(jjtree) SelectVars */

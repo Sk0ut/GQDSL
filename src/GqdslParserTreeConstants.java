@@ -5,7 +5,7 @@ public interface GqdslParserTreeConstants
   public int JJTGRAPH = 1;
   public int JJTQUERYRETURN = 2;
   public int JJTQUERY = 3;
-  public int JJTQUERYEXPR = 4;
+  public int JJTVOID = 4;
   public int JJTSELECTVARS = 5;
   public int JJTWHEREPARAMS = 6;
   public int JJTPARAMLINE = 7;
@@ -18,7 +18,7 @@ public interface GqdslParserTreeConstants
     "Graph",
     "QueryReturn",
     "Query",
-    "QueryExpr",
+    "void",
     "SelectVars",
     "WhereParams",
     "ParamLine",
@@ -26,4 +26,4 @@ public interface GqdslParserTreeConstants
     "RelationValue",
   };
 }
-/* JavaCC - OriginalChecksum=0adb8970f93daf6154a8d531c0b7dbdd (do not edit this line) */
+/* JavaCC - OriginalChecksum=10d6699ed43d58ce66861c77ec754854 (do not edit this line) */

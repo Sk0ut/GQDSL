@@ -1,0 +1,9 @@
+GQDSL_BEGIN(graph)
+
+QUERY(res) : SELECT ?name ?age WHERE {
+	?person v:label person,
+	?person v:name ?name,
+	?person v:age ?age
+}
+
+GQDSL_END

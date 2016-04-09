@@ -141,41 +141,13 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
     throw new Error("Missing return statement in function");
   }
 
-  static final public SimpleNode QueryExpr() throws ParseException {
- /*@bgen(jjtree) QueryExpr */
-  SimpleNode jjtn000 = new SimpleNode(JJTQUERYEXPR);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-      jj_consume_token(SELECT);
-      SelectVars();
-      jj_consume_token(WHERE);
-      jj_consume_token(OPEN2);
-      WhereParams();
-      jj_consume_token(CLOSE2);
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
-          if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            {if (true) throw (RuntimeException)jjte000;}
-          }
-          if (jjte000 instanceof ParseException) {
-            {if (true) throw (ParseException)jjte000;}
-          }
-          {if (true) throw (Error)jjte000;}
-    } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-    }
-    throw new Error("Missing return statement in function");
+  static final public void QueryExpr() throws ParseException {
+    jj_consume_token(SELECT);
+    SelectVars();
+    jj_consume_token(WHERE);
+    jj_consume_token(OPEN2);
+    WhereParams();
+    jj_consume_token(CLOSE2);
   }
 
   static final public SimpleNode SelectVars() throws ParseException {
@@ -525,7 +497,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[33];
+    boolean[] la1tokens = new boolean[34];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -542,7 +514,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
         }
       }
     }
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 34; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

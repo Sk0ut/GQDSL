@@ -16,6 +16,8 @@ TOKEN : /*Start and End Tokens*/
 TOKEN : /* Open and Closing Tokens */{
 	< OPEN1 : "(" >
 	< CLOSE1 : ")" >
+	< OPEN2 : "{" >
+	< CLOSE2 : "}" >
 
 }
 
@@ -32,6 +34,8 @@ TOKEN : /* Query Keywords*/
 	< PROPERTY_VALUE : "v" >
 	< QUESTIONMARK : "?" >
 	< ALL : "*" >
+	< COLON : ":" >
+	< COMMA : "," >
 	
 }TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}SimpleNode Start() :{}{  BEGIN OPEN1 Graph() CLOSE1
   (    Query()
@@ -47,7 +51,109 @@ SimpleNode Graph() :{
     }
 }
 
-SimpleNode Query() :{
+SimpleNode QueryVar(){  Token t;
 }
 {
+	t = < VAR >
+	{
+    	jjtThis.value =  t.image;
+		return jjtThis;
+  	}
+}
+
+SimpleNode Query() :{	Token t;
+}
+{
+
+  < QUERY > < OPEN1 >
+  QueryVar()
+  < CLOSE1 > <COLON >
+  QueryExpr()
+  {	return jjtThis;
+  }
+}
+
+SimpleNode QueryExpr(){
+}
+{	< SELECT >
+	SelectVars()
+	< WHERE > <OPEN2 > WhereParams() < CLOSE2 >
+	{
+	  return jjtThis;
+	}
+	
+}
+
+SimpleNode SelectVars(){}
+{	(
+	  < ALL > 	)
+	|
+	(	  (
+	  QueryVar()	  )+
+	)
+	{
+	  return jjtThis;
+	}
+}
+
+SimpleNode QueryVar()
+{}
+{	< QUESTIONMARK >
+	< VAR >
+	{
+	  return jjtThis;
+	}
+}
+
+SimpleNode WhereParams()
+{
+}
+{
+
+	ParamLine()
+	(
+	  < COMMA >
+	  ParamLine()	)*
+	
+	{
+	  return jjtThis;
+	}
+}
+
+SimpleNode ParamLine()
+{
+}
+{
+	QueryVar()
+	Relation()
+	RelationValue()
+	
+	{
+	  return jjtThis;
+	}
+
+}
+
+SimpleNode Relation()
+{
+}
+{
+	(< EDGE > | < PROPERTY > | < PROPERTY_VALUE >)
+	< COLON >
+	< VAR >
+
+	{
+	  return jjtThis;
+	}
+}
+
+SimpleNode RelationValue()
+{
+}
+{
+	QueryVar() | < VAR >
+
+	{
+	  return jjtThis;
+	}
 }

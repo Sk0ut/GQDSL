@@ -182,16 +182,19 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
  /*@bgen(jjtree) SelectVars */
   SimpleNode jjtn000 = new SimpleNode(JJTSELECTVARS);
   boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+  jjtree.openNodeScope(jjtn000);Token t;
     try {
+    jjtn000.value = "";
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case ALL:
         jj_consume_token(ALL);
+                  jjtn000.value = "ALL";
         break;
       case QUERY_VAR:
         label_2:
         while (true) {
-          jj_consume_token(QUERY_VAR);
+          t = jj_consume_token(QUERY_VAR);
+            jjtn000.value += t.image + " ";
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case QUERY_VAR:
             ;
@@ -211,9 +214,9 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
           jjtc000 = false;
           {if (true) return jjtn000;}
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
     throw new Error("Missing return statement in function");
   }
@@ -318,7 +321,6 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
         jj_consume_token(-1);
         throw new ParseException();
       }
-      jj_consume_token(COLON);
       jj_consume_token(VAR);
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
@@ -523,7 +525,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[35];
+    boolean[] la1tokens = new boolean[33];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -540,7 +542,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
         }
       }
     }
-    for (int i = 0; i < 35; i++) {
+    for (int i = 0; i < 33; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

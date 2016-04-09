@@ -23,9 +23,9 @@ TOKEN : /* Query Keywords*/
 	| < COUNT : "COUNT" >
 	| < FILTER : "FILTER" >
 	| < DISTINCT : "DISTINCT" >
-	| < EDGE : "e" >
-	| < PROPERTY : "p" >
-	| < PROPERTY_VALUE : "v" >
+	| < EDGE : "e" < COLON > >
+	| < PROPERTY : "p" < COLON > >
+	| < PROPERTY_VALUE : "v" < COLON > >
 	| < QUESTIONMARK : "?" >
 	| < ALL : "*" >
 	| < COLON : ":" >
@@ -37,9 +37,11 @@ TOKEN : /* Query Keywords*/
 	| < QUERY : "QUERY" >
 
 	| < VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
-	| < QUERY_VAR : "?" < VAR > > 
-	
-}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}SimpleNode Start() :{/*@bgen(jjtree) Start */
+	| < QUERY_VAR : "?" < VAR > > 	
+}
+< * > TOKEN:
+{	< UNKNOWN: ~[] >
+}  SimpleNode Start() :{/*@bgen(jjtree) Start */
   SimpleNode jjtn000 = new SimpleNode(JJTSTART);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -217,14 +219,19 @@ SimpleNode SelectVars() :{/*@bgen(jjtree) SelectVars */
   SimpleNode jjtn000 = new SimpleNode(JJTSELECTVARS);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+/*@egen*/
+  Token t;}
 {/*@bgen(jjtree) SelectVars */
-        try {
-/*@egen*/	(	  (
-	  < ALL > 	)
+  try {
+/*@egen*/
+  {
+    jjtn000.value = "";  }	(	  (
+	  < ALL > 		)		{
+		  jjtn000.value = "ALL";		}
 	|
 	(	  (
-	  < QUERY_VAR >	  )+
+	  t = < QUERY_VAR >	  {
+	    jjtn000.value += t.image + " ";	  }	  )+
 	))/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
@@ -234,11 +241,11 @@ SimpleNode SelectVars() :{/*@bgen(jjtree) SelectVars */
 	{
 	  return jjtn000;
 	}/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-          }
-        }
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
 /*@egen*/
 }
 
@@ -345,7 +352,6 @@ SimpleNode Relation() :
         try {
 /*@egen*/
 	(< EDGE > | < PROPERTY > | < PROPERTY_VALUE >)
-	< COLON >
 	< VAR >/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);

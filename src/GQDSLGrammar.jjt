@@ -19,9 +19,9 @@ TOKEN : /* Query Keywords*/
 	| < COUNT : "COUNT" >
 	| < FILTER : "FILTER" >
 	| < DISTINCT : "DISTINCT" >
-	| < EDGE : "e" >
-	| < PROPERTY : "p" >
-	| < PROPERTY_VALUE : "v" >
+	| < EDGE : "e" < COLON > >
+	| < PROPERTY : "p" < COLON > >
+	| < PROPERTY_VALUE : "v" < COLON > >
 	| < QUESTIONMARK : "?" >
 	| < ALL : "*" >
 	| < COLON : ":" >
@@ -33,9 +33,11 @@ TOKEN : /* Query Keywords*/
 	| < QUERY : "QUERY" >
 
 	| < VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
-	| < QUERY_VAR : "?" < VAR > > 
-	
-}TOKEN : /* IDENTIFIERS */{  < IDENTIFIER :    < LETTER >    (      < LETTER >    | < DIGIT >    )* >| < #LETTER : [ "_", "a"-"z", "A"-"Z" ] >| < #DIGIT : [ "0"-"9" ] >}SimpleNode Start() :{}{  < START > <OPEN1 > Graph() < CLOSE1 >
+	| < QUERY_VAR : "?" < VAR > > 	
+}
+< * > TOKEN:
+{	< UNKNOWN: ~[] >
+}  SimpleNode Start() :{}{  < START > <OPEN1 > Graph() < CLOSE1 >
   (    Query()
   )* < END >  {    return jjtThis;  }}
 
@@ -82,12 +84,17 @@ SimpleNode QueryExpr() :{
 	
 }
 
-SimpleNode SelectVars() :{}
-{	(	  (
-	  < ALL > 	)
+SimpleNode SelectVars() :{
+  Token t;}
+{
+  {
+    jjtThis.value = "";  }	(	  (
+	  < ALL > 		)		{
+		  jjtThis.value = "ALL";		}
 	|
 	(	  (
-	  < QUERY_VAR >	  )+
+	  t = < QUERY_VAR >	  {
+	    jjtThis.value += t.image + " ";	  }	  )+
 	))
 	{
 	  return jjtThis;
@@ -129,7 +136,6 @@ SimpleNode Relation() :
 }
 {
 	(< EDGE > | < PROPERTY > | < PROPERTY_VALUE >)
-	< COLON >
 	< VAR >
 
 	{

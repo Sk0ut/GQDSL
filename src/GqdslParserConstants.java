@@ -59,11 +59,7 @@ public interface GqdslParserConstants {
   /** RegularExpression Id. */
   int QUERY_VAR = 31;
   /** RegularExpression Id. */
-  int IDENTIFIER = 32;
-  /** RegularExpression Id. */
-  int LETTER = 33;
-  /** RegularExpression Id. */
-  int DIGIT = 34;
+  int UNKNOWN = 32;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -90,9 +86,9 @@ public interface GqdslParserConstants {
     "\"COUNT\"",
     "\"FILTER\"",
     "\"DISTINCT\"",
-    "\"e\"",
-    "\"p\"",
-    "\"v\"",
+    "<EDGE>",
+    "<PROPERTY>",
+    "<PROPERTY_VALUE>",
     "\"?\"",
     "\"*\"",
     "\":\"",
@@ -102,9 +98,7 @@ public interface GqdslParserConstants {
     "\"QUERY\"",
     "<VAR>",
     "<QUERY_VAR>",
-    "<IDENTIFIER>",
-    "<LETTER>",
-    "<DIGIT>",
+    "<UNKNOWN>",
   };
 
 }

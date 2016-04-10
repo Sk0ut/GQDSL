@@ -1,20 +1,36 @@
 /**
  * JJTree template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;}PARSER_BEGIN(GqdslParser)
-public class GqdslParser{  public static void main(String args [])  {    System.out.println("Reading from standard input...");    System.out.print("Enter an expression like \"1+(2+3)*var;\" :");    new GqdslParser(System.in);    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("Thank you.");    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}TOKEN : /* LITERALS */{  < INTEGER_LITERAL :    < DECIMAL_LITERAL > ([ "l", "L" ])?  | < HEX_LITERAL > ([ "l", "L" ])?  | < OCTAL_LITERAL > ([ "l", "L" ])?     >| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >}
+ */options{  static = true;
+  LOOKAHEAD = 1;}PARSER_BEGIN(GqdslParser)
+import java.io.FileInputStream;
 
+public class GqdslParser{  public static void main(String args [])  {
+    String fileName = "Testes";
+    try    {	  new GqdslParser(new FileInputStream(fileName));		
+	} catch (Exception e)	{
+	  e.printStackTrace();
+	  return;	}
+    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
 
-TOKEN : /* Open and Closing Tokens */{
-	< OPEN1 : "(" >
-	| < CLOSE1 : ")" >
-	| < OPEN2 : "{" >
-	| < CLOSE2 : "}" >
+< DEFAULT > TOKEN:{
+	< QUERY_START :  "QUERY" >: QUERY
+	//| < JAVA_LINE : (~["\n","\r"])*(["\n","\r"])+ >}
+
+< DEFAULT, QUERY, IN_BRACES > SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
 
-}
+< QUERY > MORE:{
+  "\"" : STRING_BODY}
 
-TOKEN : /* Query Keywords*/
+< STRING_BODY > TOKEN:
 {
-	< SELECT : "SELECT" >
+  < CONSTANT_VALUE : (~["\r","\n"])* "\""> : QUERY}
+
+< QUERY > TOKEN :{
+	< OPEN1 : "(" > : IN_BRACES
+	| < OPEN2 : "{" >
+	| < CLOSE2 : "}" > : DEFAULT
+
+	| < SELECT : "SELECT" >
 	| < WHERE : "WHERE" >
 	| < COUNT : "COUNT" >
 	| < FILTER : "FILTER" >
@@ -22,135 +38,134 @@ TOKEN : /* Query Keywords*/
 	| < EDGE : "e" < COLON > >
 	| < PROPERTY : "p" < COLON > >
 	| < PROPERTY_VALUE : "v" < COLON > >
-	| < QUESTIONMARK : "?" >
+	| < QUESTION_MARK : "?" >
 	| < ALL : "*" >
 	| < COLON : ":" >
-	| < COMMA : "," >
-
-	| < START : "GQDSL_BEGIN" >
-	|  < END : "GQDSL_END" >
-
-	| < QUERY : "QUERY" >
-
-	| < VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
-	| < QUERY_VAR : "?" < VAR > > 	
+	| < DOT: "." >
+	| < IDENTIFIER : ["a"-"z","A"-"Z","_"](["a"-"z","A"-"Z","0"-"9","_"])* >
+	| < QUERY_VAR : < QUESTION_MARK > < IDENTIFIER > >
 }
-< INBRACES > TOKEN:{
-  < JAVA_VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >}
+< IN_BRACES > TOKEN:{
+  	< JAVA_VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
+	| < CLOSE1 : ")" > : QUERY }
+
+< QUERY, IN_BRACES > TOKEN:{
+  < COMMA: "," >}
 
 < * > TOKEN:
 {	< UNKNOWN: ~[] >
-}  
-SimpleNode Start() :{}{  < START > <OPEN1 > Graph() < CLOSE1 >
+}
+ 
+SimpleNode Start() :{}{ // JavaCode()
   (    Query()
-  )* < END >  {    return jjtThis;  }}
-
-SimpleNode Graph() :{
-  Token t;}
+  )*
+ // JavaCode()    {    return jjtThis;  }}
+/*
+SimpleNode JavaCode() :
+{Token t;}
 {
-	t = < VAR >
-	{
-    	jjtThis.value =  t.image;
-		return jjtThis;
-    }
+  	{		jjtThis.value = "";
+  	}	(		t = < JAVA_LINE >
+	  	{
+	    	jjtThis.value += t.image;	  	}
+	)+
+	{		return jjtThis;
+	}
 }
-
-SimpleNode QueryReturn() :{  Token t;
-}
-{
-	t = < VAR >
-	{
-    	jjtThis.value =  t.image;
-		return jjtThis;
-  	}
-}
-
-SimpleNode Query() :{	Token t;
-}
+*/
+SimpleNode Query() :{}
 {
-
-  < QUERY > < OPEN1 >
-  QueryReturn()
-  < CLOSE1 > <COLON >
+  QueryHeader()
   QueryExpr()
   {	return jjtThis;
-  }
-}
+  }}
 
-void QueryExpr() #void :{}
-{	< SELECT >
-	SelectVars()
-	< WHERE > <OPEN2 > WhereParams() < CLOSE2 >
-}
+void QueryHeader() #void :
+{}
+{
+  < QUERY_START ><OPEN1 > Graph() < COMMA > Return() < CLOSE1 >  < COLON >}
 
-SimpleNode SelectVars() :{
-  Token t;}
+SimpleNode Graph():
+{Token t;}
 {
-  {
-    jjtThis.value = "";  }	(	  (
-	  < ALL > 		)		{
-		  jjtThis.value = "ALL";		}
-	|
-	(	  (
-	  t = < QUERY_VAR >	  {
-	    jjtThis.value += t.image + " ";	  }	  )+
-	))
-	{
-	  return jjtThis;
-	}
-}
-
+  t = < JAVA_VAR >  {
+    jjtThis.value = t.image;
+    return jjtThis;  }}
 
-SimpleNode WhereParams() :
-{
-}
-{
-
-	ParamLine()
-	(
-	  < COMMA >
-	  ParamLine()	)*
-	
-	{
-	  return jjtThis;
-	}
-}
-
-SimpleNode ParamLine() :
-{
-}
-{
-	< QUERY_VAR >
-	Relation()
-	RelationValue()
-	
-	{
-	  return jjtThis;
-	}
-
-}
-
-SimpleNode Relation() :
-{
-}
-{
-	(< EDGE > | < PROPERTY > | < PROPERTY_VALUE >)
-	< VAR >
-
-	{
-	  return jjtThis;
-	}
-}
-
-SimpleNode RelationValue() :
-{
-  Token t;
-}
-{
-	(	  t = < QUERY_VAR > | t = < VAR >
-	)
+SimpleNode Return():
+{Token t;}
+{	t = < JAVA_VAR >
 	{
 	  jjtThis.value = t.image;
-	  return jjtThis;
-	}
+	  return jjtThis;	}
 }
+
+SimpleNode QueryExpr():
+{}{
+  QuerySelect()
+  QueryWhere()
+  {	return jjtThis;		
+ }}
+
+SimpleNode QuerySelect():
+{Token t;}
+{
+  {
+    jjtThis.value = "";  }
+  < SELECT >
+  (
+    ((< ALL >    {
+      jjtThis.value = "*";    })
+  |       (t = < QUERY_VAR >	    {		  jjtThis.value += t.image + " ";
+	    }
+	  )+
+	)
+  )
+  {
+    return jjtThis;  }}
+SimpleNode QueryWhere():
+{}
+{
+  < WHERE ><OPEN2 >  WhereExpr()
+  (    < DOT >
+    WhereExpr()
+  )*
+  <CLOSE2 >
+  {
+    return jjtThis;  }}
+
+SimpleNode WhereExpr():
+{}
+{
+	RelationSubject()
+	Relation()
+	RelationValue()
+	{
+	  return jjtThis;	}}
+
+SimpleNode RelationSubject():
+{Token t;}
+{
+  t= < QUERY_VAR >
+  {
+    jjtThis.value = t.image;
+    return jjtThis;  }}
+
+SimpleNode Relation():
+{Token t1, t2;}
+{
+	(t1=< EDGE > | t1=< PROPERTY > | t1=< PROPERTY_VALUE >)
+	t2=< IDENTIFIER >
+	{
+	  jjtThis.value = t1.image + t2.image; 
+	  return jjtThis;	}
+}
+SimpleNode RelationValue():
+{Token t;}
+{
+  (    t = < QUERY_VAR > |
+    t = < CONSTANT_VALUE >
+  )
+  {
+    jjtThis.value = t.image;
+    return jjtThis;  }}

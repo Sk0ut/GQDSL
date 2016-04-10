@@ -1,9 +1,18 @@
-GQDSL_BEGIN(graph)
-
-QUERY(res) : SELECT ?name ?age WHERE {
-	?person v:label person,
-	?person v:name ?name,
-	?person v:age ?age
+// Display the name and age of all people in the database
+QUERY(graph, result1): SELECT ?name ?age WHERE {
+ ?person v:label "person" .
+ ?person v:name ?name.
+ ?person v:age ?age 
 }
 
-GQDSL_END
+
+// Display the name of and projects created by people Daniel knwos.
+QUERY(graph, result2): SELECT ?name ?projectName
+WHERE {
+  ?daniel v:label "person" .
+  ?daniel v:name "Daniel".
+  ?daniel e:knows ?person .
+  ?person v:name ?name.
+  ?person e:created ?project .
+  ?project e:name ?projectName
+}

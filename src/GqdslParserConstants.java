@@ -9,80 +9,74 @@ public interface GqdslParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 7;
+  int QUERY_START = 1;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 8;
+  int CONSTANT_VALUE = 9;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 9;
+  int OPEN1 = 10;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 10;
+  int OPEN2 = 11;
   /** RegularExpression Id. */
-  int OPEN1 = 11;
+  int CLOSE2 = 12;
   /** RegularExpression Id. */
-  int CLOSE1 = 12;
+  int SELECT = 13;
   /** RegularExpression Id. */
-  int OPEN2 = 13;
+  int WHERE = 14;
   /** RegularExpression Id. */
-  int CLOSE2 = 14;
+  int COUNT = 15;
   /** RegularExpression Id. */
-  int SELECT = 15;
+  int FILTER = 16;
   /** RegularExpression Id. */
-  int WHERE = 16;
+  int DISTINCT = 17;
   /** RegularExpression Id. */
-  int COUNT = 17;
+  int EDGE = 18;
   /** RegularExpression Id. */
-  int FILTER = 18;
+  int PROPERTY = 19;
   /** RegularExpression Id. */
-  int DISTINCT = 19;
+  int PROPERTY_VALUE = 20;
   /** RegularExpression Id. */
-  int EDGE = 20;
+  int QUESTION_MARK = 21;
   /** RegularExpression Id. */
-  int PROPERTY = 21;
+  int ALL = 22;
   /** RegularExpression Id. */
-  int PROPERTY_VALUE = 22;
+  int COLON = 23;
   /** RegularExpression Id. */
-  int QUESTIONMARK = 23;
+  int DOT = 24;
   /** RegularExpression Id. */
-  int ALL = 24;
+  int IDENTIFIER = 25;
   /** RegularExpression Id. */
-  int COLON = 25;
+  int QUERY_VAR = 26;
   /** RegularExpression Id. */
-  int COMMA = 26;
+  int JAVA_VAR = 27;
   /** RegularExpression Id. */
-  int START = 27;
+  int CLOSE1 = 28;
   /** RegularExpression Id. */
-  int END = 28;
+  int COMMA = 29;
   /** RegularExpression Id. */
-  int QUERY = 29;
-  /** RegularExpression Id. */
-  int VAR = 30;
-  /** RegularExpression Id. */
-  int QUERY_VAR = 31;
-  /** RegularExpression Id. */
-  int JAVA_VAR = 32;
-  /** RegularExpression Id. */
-  int UNKNOWN = 33;
+  int UNKNOWN = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
-  int INBRACES = 1;
+  int QUERY = 1;
+  /** Lexical state. */
+  int IN_BRACES = 2;
+  /** Lexical state. */
+  int STRING_BODY = 3;
 
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
+    "\"QUERY\"",
     "\" \"",
     "\"\\t\"",
     "\"\\n\"",
     "\"\\r\"",
-    "<token of kind 5>",
     "<token of kind 6>",
-    "<INTEGER_LITERAL>",
-    "<DECIMAL_LITERAL>",
-    "<HEX_LITERAL>",
-    "<OCTAL_LITERAL>",
+    "<token of kind 7>",
+    "\"\\\"\"",
+    "<CONSTANT_VALUE>",
     "\"(\"",
-    "\")\"",
     "\"{\"",
     "\"}\"",
     "\"SELECT\"",
@@ -96,13 +90,12 @@ public interface GqdslParserConstants {
     "\"?\"",
     "\"*\"",
     "\":\"",
-    "\",\"",
-    "\"GQDSL_BEGIN\"",
-    "\"GQDSL_END\"",
-    "\"QUERY\"",
-    "<VAR>",
+    "\".\"",
+    "<IDENTIFIER>",
     "<QUERY_VAR>",
     "<JAVA_VAR>",
+    "\")\"",
+    "\",\"",
     "<UNKNOWN>",
   };
 

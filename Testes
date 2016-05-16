@@ -5,7 +5,6 @@ QUERY(graph, result1): SELECT ?name ?age WHERE {
  ?person v:age ?age 
 }
 
-
 // Display the name of and projects created by people Daniel knows.
 QUERY(graph, result2): SELECT ?name ?projectName
 WHERE {
@@ -18,6 +17,15 @@ WHERE {
 }
 
 QUERY(graph, result3): SELECT ?c ?d
+WHERE {
+  ?a v:name "daniel" .
+  ?a p:location ?b .
+  ?b v:value ?c .
+  ?b v:startTime ?d
+}
+
+// This Will Fail!
+QUERY(graph, result3): SELECT ?c ?d ?e
 WHERE {
   ?a v:name "daniel" .
   ?a p:location ?b .

@@ -107,6 +107,11 @@ public class GqdslParser/*@bgen(jjtree)*/ implements GqdslParserTreeConstants, G
             lastQueryTable = symbolTables.get(symbolTables.size() - 1);
             QueryHeader();
             QueryExpr();
+            for (Map.Entry<String, String> entry: lastQueryTable.entrySet()) {
+                if (Objects.equals(entry.getValue(), "undefined")) {
+                    throw new Error("Variable " + entry.getKey() + " cannot be left undefined at the end of query");
+                }
+            }
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             {

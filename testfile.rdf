@@ -1,6 +1,6 @@
 <rdf:RDF
   xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-  xmlns:vcard='http://www.w3.org/2001/vcard-rdf/3.0#'
+  xmlns:vcard='http://www.tinkerpop.com/traversal/value#'
  >
   <rdf:Description rdf:nodeID="A0">
     <vcard:Family>Smith</vcard:Family>

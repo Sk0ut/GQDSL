@@ -21,14 +21,15 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants/*@e
     private static Map<String, String> lastQueryTable;
     private static String lastRelation;
     public static void main(String args [])  {
-    String fileName = "Testes";
+    String fileName = "Test.jgq";
     try    {	  new GqdslParser(new FileInputStream(fileName));		
 	} catch (Exception e)	{
 	  e.printStackTrace();
 	  return;	}
     try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");
-      Writer writer = new PrintWriter(new FileOutputStream("TesteCompiled"));
-      n.compile(writer);    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
+      Writer writer = new PrintWriter(new FileOutputStream("src/Test.java"));
+      n.compile(writer);
+      writer.close();    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
 
 < DEFAULT > TOKEN:{
 	< QUERY_START :  "QUERY" >: QUERY

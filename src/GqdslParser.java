@@ -16,7 +16,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
 
   public static void main(String args [])
   {
-    String fileName = "Testes";
+    String fileName = "Test.jgq";
     try
     {
           new GqdslParser(new FileInputStream(fileName));
@@ -31,7 +31,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
       SimpleNode n = GqdslParser.Start();
       n.dump("");
       System.out.println("File \u005c"" + fileName + "\u005c" is according to grammar.");
-      Writer writer = new PrintWriter(new FileOutputStream("TesteCompiled"));
+      Writer writer = new PrintWriter(new FileOutputStream("src/Test.java"));
       n.compile(writer);
       writer.close();
     }

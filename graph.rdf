@@ -24,6 +24,10 @@
   <rdf:Description rdf:nodeID="5">
   </rdf:Description>
   <rdf:Description rdf:nodeID="6">
+    <p:name>
+      <v:first>afonso</v:first>
+      <v:last>castro</v:last>
+    </p:name>
     <e:knows rdf:nodeID="8"/>
     <e:bought rdf:nodeID="7"/>
   </rdf:Description>

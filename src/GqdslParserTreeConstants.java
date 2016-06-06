@@ -2,21 +2,23 @@
 public interface GqdslParserTreeConstants
 {
   public int JJTSTART = 0;
-  public int JJTQUERY = 1;
-  public int JJTVOID = 2;
-  public int JJTGRAPH = 3;
-  public int JJTRETURN = 4;
-  public int JJTQUERYEXPR = 5;
-  public int JJTQUERYSELECT = 6;
-  public int JJTQUERYWHERE = 7;
-  public int JJTWHEREEXPR = 8;
-  public int JJTRELATIONSUBJECT = 9;
-  public int JJTRELATION = 10;
-  public int JJTRELATIONVALUE = 11;
+  public int JJTJAVACODE = 1;
+  public int JJTQUERY = 2;
+  public int JJTVOID = 3;
+  public int JJTGRAPH = 4;
+  public int JJTRETURN = 5;
+  public int JJTQUERYEXPR = 6;
+  public int JJTQUERYSELECT = 7;
+  public int JJTQUERYWHERE = 8;
+  public int JJTWHEREEXPR = 9;
+  public int JJTRELATIONSUBJECT = 10;
+  public int JJTRELATION = 11;
+  public int JJTRELATIONVALUE = 12;
 
 
   public String[] jjtNodeName = {
     "Start",
+    "JavaCode",
     "Query",
     "void",
     "Graph",
@@ -30,4 +32,4 @@ public interface GqdslParserTreeConstants
     "RelationValue",
   };
 }
-/* JavaCC - OriginalChecksum=ec81ae9e1d2e0dc3f49a23ccede6f2ec (do not edit this line) */
+/* JavaCC - OriginalChecksum=72d8218f0e8c94de4c8c5dc441fea907 (do not edit this line) */

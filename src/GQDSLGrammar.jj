@@ -4,11 +4,20 @@
  */options{  static = true;
   LOOKAHEAD = 1;}PARSER_BEGIN(GqdslParser)
 import java.io.FileInputStream;
+import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 
 public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected static JJTGqdslParserState jjtree = new JJTGqdslParserState();
 
-/*@egen*/  public static void main(String args [])  {
+/*@egen*/
+	private static List<Map<String, String>> symbolTables = new LinkedList<Map<String, String>>();
+    private static Map<String, String> lastQueryTable;
+    private static String lastRelation;
+    public static void main(String args [])  {
     String fileName = "Testes";
     try    {	  new GqdslParser(new FileInputStream(fileName));		
 	} catch (Exception e)	{
@@ -18,9 +27,9 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants/*@e
 
 < DEFAULT > TOKEN:{
 	< QUERY_START :  "QUERY" >: QUERY
-	//| < JAVA_LINE : (~["\n","\r"])*(["\n","\r"])+ >}
-
-< DEFAULT, QUERY, IN_BRACES > SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
+  | 	< JAVA_CODE : ~[] >}
+
+< QUERY, IN_BRACES > SKIP :{  " "| "\t"| "\n"| "\r"}
 
 < QUERY > MORE:{
   "\"" : STRING_BODY}
@@ -66,15 +75,16 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants/*@e
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) Start */
   try {
-/*@egen*/ // JavaCode()
+/*@egen*/  JavaCode()
   (    Query()
-  )*/*@bgen(jjtree)*/
+    JavaCode()
+  )*
+  < EOF >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/
- // JavaCode()    {    return jjtn000;  }/*@bgen(jjtree)*/
+/*@egen*/  {    return jjtn000;  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -95,19 +105,36 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants/*@e
     }
   }
 /*@egen*/}
-/*
+
 SimpleNode JavaCode() :
-{Token t;}
-{
-  	{		jjtThis.value = "";
-  	}	(		t = < JAVA_LINE >
+{/*@bgen(jjtree) JavaCode */
+ SimpleNode jjtn000 = new SimpleNode(JJTJAVACODE);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
+{/*@bgen(jjtree) JavaCode */
+        try {
+/*@egen*/
+  	{		jjtn000.value = "";
+  	}	(		t = < JAVA_CODE >
 	  	{
-	    	jjtThis.value += t.image;	  	}
-	)+
-	{		return jjtThis;
-	}
+	    	jjtn000.value += t.image;	  	}
+	)*/*@bgen(jjtree)*/
+        {
+          jjtree.closeNodeScope(jjtn000, true);
+          jjtc000 = false;
+        }
+/*@egen*/
+	{  		return jjtn000;
+	}/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
 }
-*/
+
 SimpleNode Query() :{/*@bgen(jjtree) Query */
   SimpleNode jjtn000 = new SimpleNode(JJTQUERY);
   boolean jjtc000 = true;
@@ -116,6 +143,9 @@ SimpleNode Query() :{/*@bgen(jjtree) Query */
 {/*@bgen(jjtree) Query */
   try {
 /*@egen*/
+  {
+     symbolTables.add(new HashMap<String, String>());
+     lastQueryTable = symbolTables.get(symbolTables.size() - 1);  }
   QueryHeader()
   QueryExpr()/*@bgen(jjtree)*/
   {
@@ -123,7 +153,12 @@ SimpleNode Query() :{/*@bgen(jjtree) Query */
     jjtc000 = false;
   }
 /*@egen*/
-  {	return jjtn000;
+  {
+    for (Map.Entry<String, String> entry: lastQueryTable.entrySet()) {
+                if (Objects.equals(entry.getValue(), "undefined")) {
+                    throw new Error("Variable " + entry.getKey() + " cannot be left undefined at the end of query");
+                }
+            }	return jjtn000;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -254,6 +289,7 @@ SimpleNode QuerySelect():
     ((< ALL >    {
       jjtn000.value = "*";    })
   |       (t = < QUERY_VAR >	    {		  jjtn000.value += t.image + " ";
+		  lastQueryTable.put(t.image, "undefined");
 	    }
 	  )+
 	)
@@ -370,6 +406,13 @@ SimpleNode RelationSubject():
 /*@egen*/
   {
     jjtn000.value = t.image;
+    String type = lastQueryTable.get(t.image);
+            if (Objects.equals(type, "value"))
+                throw new Error("Value cannot be used as left hand operand");
+            if (type == null)
+                lastQueryTable.put(t.image, "vertex");
+            else if (Objects.equals(type, "undefined"))
+                lastQueryTable.replace(t.image, "vertex");
     return jjtn000;  }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {
@@ -387,7 +430,15 @@ SimpleNode Relation():
 {/*@bgen(jjtree) Relation */
         try {
 /*@egen*/
-	(t1=< EDGE > | t1=< PROPERTY > | t1=< PROPERTY_VALUE >)
+	(
+	  t1=< EDGE >		{
+		   lastRelation = "edge";		}
+	  | t1=< PROPERTY >		{
+		   lastRelation = "property";		}
+	  | t1=< PROPERTY_VALUE >
+		{
+		   lastRelation = "property_value";		}
+	)
 	t2=< IDENTIFIER >/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
@@ -413,8 +464,38 @@ SimpleNode RelationValue():
 {/*@bgen(jjtree) RelationValue */
   try {
 /*@egen*/
-  (    t = < QUERY_VAR > |
-    t = < CONSTANT_VALUE >
+  (    t = < QUERY_VAR >    {
+       String type = lastQueryTable.get(t.image);
+                    if (Objects.equals(lastRelation, "property_value")) {
+                        if (type == null)
+                            lastQueryTable.put(t.image, "value");
+                        else if (Objects.equals(type, "undefined"))
+                            lastQueryTable.replace(t.image, "value");
+                        else if (Objects.equals(type, "value"))
+                            throw new Error("Value of variable " + t.image + " cannot be redefined");
+                        else throw new Error("Variable " + t.image + " has type " + type + " and is being used as value");
+                         }
+                    else if (Objects.equals(lastRelation, "property")) {
+                        if (type == null)
+                            lastQueryTable.put(t.image, "property");
+                        else if (Objects.equals(type, "undefined"))
+                            lastQueryTable.replace(t.image, "property");
+                        else if (Objects.equals(type, "property"))
+                            throw new Error("Value of variable " + t.image + " cannot be redefined");
+                        else throw new Error("Variable " + t.image + " has type " + type + " and is being used as property");
+                    }
+                    else if (Objects.equals(lastRelation, "edge")) {
+                        if (type == null)
+                            lastQueryTable.put(t.image, "vertex");
+                        else if (Objects.equals(type, "undefined"))
+                            lastQueryTable.replace(t.image, "vertex");
+                        else if (!Objects.equals(type, "vertex"))
+                            throw new Error("Variable " + t.image + " has type " + type + " and is being used as vertex");
+                    }    }
+    |
+    t = < CONSTANT_VALUE >    {
+       if (!Objects.equals(lastRelation, "property_value"))
+                        throw new Error("Constants can only be used as properties of vertices");    }
   )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);

@@ -11,49 +11,51 @@ public interface GqdslParserConstants {
   /** RegularExpression Id. */
   int QUERY_START = 1;
   /** RegularExpression Id. */
-  int CONSTANT_VALUE = 9;
+  int JAVA_CODE = 2;
   /** RegularExpression Id. */
-  int OPEN1 = 10;
+  int CONSTANT_VALUE = 8;
   /** RegularExpression Id. */
-  int OPEN2 = 11;
+  int OPEN1 = 9;
   /** RegularExpression Id. */
-  int CLOSE2 = 12;
+  int OPEN2 = 10;
   /** RegularExpression Id. */
-  int SELECT = 13;
+  int CLOSE2 = 11;
   /** RegularExpression Id. */
-  int WHERE = 14;
+  int SELECT = 12;
   /** RegularExpression Id. */
-  int COUNT = 15;
+  int WHERE = 13;
   /** RegularExpression Id. */
-  int FILTER = 16;
+  int COUNT = 14;
   /** RegularExpression Id. */
-  int DISTINCT = 17;
+  int FILTER = 15;
   /** RegularExpression Id. */
-  int EDGE = 18;
+  int DISTINCT = 16;
   /** RegularExpression Id. */
-  int PROPERTY = 19;
+  int EDGE = 17;
   /** RegularExpression Id. */
-  int PROPERTY_VALUE = 20;
+  int PROPERTY = 18;
   /** RegularExpression Id. */
-  int QUESTION_MARK = 21;
+  int PROPERTY_VALUE = 19;
   /** RegularExpression Id. */
-  int ALL = 22;
+  int QUESTION_MARK = 20;
   /** RegularExpression Id. */
-  int COLON = 23;
+  int ALL = 21;
   /** RegularExpression Id. */
-  int DOT = 24;
+  int COLON = 22;
   /** RegularExpression Id. */
-  int IDENTIFIER = 25;
+  int DOT = 23;
   /** RegularExpression Id. */
-  int QUERY_VAR = 26;
+  int IDENTIFIER = 24;
   /** RegularExpression Id. */
-  int JAVA_VAR = 27;
+  int QUERY_VAR = 25;
   /** RegularExpression Id. */
-  int CLOSE1 = 28;
+  int JAVA_VAR = 26;
   /** RegularExpression Id. */
-  int COMMA = 29;
+  int CLOSE1 = 27;
   /** RegularExpression Id. */
-  int UNKNOWN = 30;
+  int COMMA = 28;
+  /** RegularExpression Id. */
+  int UNKNOWN = 29;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -68,12 +70,11 @@ public interface GqdslParserConstants {
   String[] tokenImage = {
     "<EOF>",
     "\"QUERY\"",
+    "<JAVA_CODE>",
     "\" \"",
     "\"\\t\"",
     "\"\\n\"",
     "\"\\r\"",
-    "<token of kind 6>",
-    "<token of kind 7>",
     "\"\\\"\"",
     "<CONSTANT_VALUE>",
     "\"(\"",

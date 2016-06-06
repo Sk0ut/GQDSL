@@ -9,10 +9,8 @@ public class Test {
 
         QUERY(filepath,result): SELECT * WHERE {
             ?person v:label "person".
-                    ? person v:
-            name ? name.
-                    ? person v:
-            age ? age
+                    ?person v:name ?name.
+                    ?person v:age ?age
         }
 
         }

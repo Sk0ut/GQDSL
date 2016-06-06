@@ -3,7 +3,6 @@
  */
 public class Test {
 
-
     static void main(String[] args){
         String filepath = "testfile.rdf";
 

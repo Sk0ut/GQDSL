@@ -16,7 +16,19 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
 
   public static void main(String args [])
   {
-    String fileName = "Test.jgq";
+
+    if(args.length != 1){
+        System.out.println("USAGE: " + GqdslParser.class.getName() + " <fileName>");
+        return;
+    }
+
+    String fileName = args[0];
+
+      if(!fileName.substring(fileName.lastIndexOf('.'), fileName.length()).equals(".jgq")){
+          System.out.println("The file provided must have the .jgq extension");
+          return;
+      }
+
     try
     {
           new GqdslParser(new FileInputStream(fileName));
@@ -31,7 +43,7 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
       SimpleNode n = GqdslParser.Start();
       n.dump("");
       System.out.println("File \u005c"" + fileName + "\u005c" is according to grammar.");
-      Writer writer = new PrintWriter(new FileOutputStream("src/Test.java"));
+      Writer writer = new PrintWriter(new FileOutputStream(fileName + fileName.substring(0, fileName.lastIndexOf('.')) + ".java"));
       n.compile(writer);
       writer.close();
     }

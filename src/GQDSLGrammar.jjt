@@ -1,7 +1,14 @@
 /**
  * JJTree template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;
-  LOOKAHEAD = 1;}PARSER_BEGIN(GqdslParser)
+ */
+options
+{
+  static = true;
+  LOOKAHEAD = 1;
+}
+
+PARSER_BEGIN(GqdslParser)
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.Writer;
@@ -12,35 +19,80 @@ import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 
-public class GqdslParser{
+public class GqdslParser
+{
 	private static List<Map<String, String>> symbolTables = new LinkedList<Map<String, String>>();
     private static Map<String, String> lastQueryTable;
     private static String lastRelation;
-    public static void main(String args [])  {
-    String fileName = "Test.jgq";
-    try    {	  new GqdslParser(new FileInputStream(fileName));		
-	} catch (Exception e)	{
+  
+  public static void main(String args [])
+  {
+     if(args.length != 1){
+        System.out.println("USAGE: " + GqdslParser.class.getName() + " <fileName>");
+        return;
+     }
+
+     String fileName = args[0];
+
+     if(!fileName.substring(fileName.lastIndexOf('.'), fileName.length()).equals(".jgq")){
+         System.out.println("The file provided must have the .jgq extension");
+         return;
+     }
+
+    try
+    {
+	  new GqdslParser(new FileInputStream(fileName));
+		
+	} catch (Exception e)
+	{
 	  e.printStackTrace();
-	  return;	}
-    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");
-      Writer writer = new PrintWriter(new FileOutputStream("src/Test.java"));
+	  return;
+	}
+    try
+    {
+      SimpleNode n = GqdslParser.Start();
+      n.dump("");
+      System.out.println("File \"" + fileName + "\" is according to grammar.");
+      Writer writer = new PrintWriter(new FileOutputStream(fileName + fileName.substring(0, fileName.lastIndexOf('.')) + ".java"));
       n.compile(writer);
-      writer.close();    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
+      writer.close();
+    }
+    catch (Exception e)
+    {
+      System.out.println("Oops.");
+      System.out.println(e.getMessage());
+    }
+  }
+}
 
-< DEFAULT > TOKEN:{
+PARSER_END(GqdslParser)
+
+< DEFAULT > TOKEN:
+{
 	< QUERY_START :  "QUERY" >: QUERY
-  | 	< JAVA_CODE : ~[] >}
+  | 	< JAVA_CODE : ~[] >
+}
 
-< QUERY, IN_BRACES > SKIP :{  " "| "\t"| "\n"| "\r"}
+< QUERY, IN_BRACES > SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
 
-< QUERY > MORE:{
-  "\"" : STRING_BODY}
+< QUERY > MORE:
+{
+  "\"" : STRING_BODY
+}
 
 < STRING_BODY > TOKEN:
 {
-  < CONSTANT_VALUE : (~["\r","\n"])* "\""> : QUERY}
+  < CONSTANT_VALUE : (~["\r","\n"])* "\""> : QUERY
+}
 
-< QUERY > TOKEN :{
+< QUERY > TOKEN :
+{
 	< OPEN1 : "(" > : IN_BRACES
 	| < OPEN2 : "{" >
 	| < CLOSE2 : "}" > : DEFAULT
@@ -59,41 +111,63 @@ public class GqdslParser{
 	| < DOT: "." >
 	| < IDENTIFIER : ["a"-"z","A"-"Z","_"](["a"-"z","A"-"Z","0"-"9","_"])* >
 	| < QUERY_VAR : < QUESTION_MARK > < IDENTIFIER > >
-}
-< IN_BRACES > TOKEN:{
-  	< JAVA_VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
-	| < CLOSE1 : ")" > : QUERY }
+}
 
-< QUERY, IN_BRACES > TOKEN:{
-  < COMMA: "," >}
+< IN_BRACES > TOKEN:
+{
+  	< JAVA_VAR : ["a"-"z","A"-"Z","$","_"](["a"-"z","A"-"Z","0"-"9","$","_"])* >
+	| < CLOSE1 : ")" > : QUERY 
+}
+
+< QUERY, IN_BRACES > TOKEN:
+{
+  < COMMA: "," >
+}
 
 < * > TOKEN:
-{	< UNKNOWN: ~[] >
+{
+	< UNKNOWN: ~[] >
 }
  
-SimpleNode Start() :{}{  JavaCode()
-  (    Query()
+
+SimpleNode Start() :
+{}
+{
+  JavaCode()
+  (
+    Query()
     JavaCode()
   )*
-  < EOF >  {    return jjtThis;  }}
+  < EOF >
+  {
+    return jjtThis;
+  }
+}
 
 SimpleNode JavaCode() :
 {Token t;}
 {
-  	{		jjtThis.value = "";
-  	}	(		t = < JAVA_CODE >
+  	{
+		jjtThis.value = "";
+  	}
+	(
+		t = < JAVA_CODE >
 	  	{
-	    	jjtThis.value += t.image;	  	}
+	    	jjtThis.value += t.image;
+	  	}
 	)*
-	{  		return jjtThis;
+	{  
+		return jjtThis;
 	}
 }
 
-SimpleNode Query() :{}
+SimpleNode Query() :
+{}
 {
   {
      symbolTables.add(new HashMap<String, String>());
-     lastQueryTable = symbolTables.get(symbolTables.size() - 1);  }
+     lastQueryTable = symbolTables.get(symbolTables.size() - 1);
+  }
   QueryHeader()
   QueryExpr()
   {
@@ -101,63 +175,87 @@ SimpleNode Query() :{}
                 if (Objects.equals(entry.getValue(), "undefined")) {
                     throw new Error("Variable " + entry.getKey() + " cannot be left undefined at the end of query");
                 }
-            }	return jjtThis;
-  }}
+            }
+	return jjtThis;
+  }
+}
 
 void QueryHeader() #void :
 {}
 {
-  < QUERY_START ><OPEN1 > Graph() < COMMA > Return() < CLOSE1 >  < COLON >}
+  < QUERY_START ><OPEN1 > Graph() < COMMA > Return() < CLOSE1 >  < COLON >
+}
 
 SimpleNode Graph():
 {Token t;}
 {
-  t = < JAVA_VAR >  {
+  t = < JAVA_VAR >
+  {
     jjtThis.value = t.image;
-    return jjtThis;  }}
+    return jjtThis;
+  }
+}
 
 SimpleNode Return():
 {Token t;}
-{	t = < JAVA_VAR >
+{
+	t = < JAVA_VAR >
 	{
 	  jjtThis.value = t.image;
-	  return jjtThis;	}
+	  return jjtThis;
+	}
 }
 
 SimpleNode QueryExpr():
-{}{
+{}
+{
   QuerySelect()
   QueryWhere()
-  {	return jjtThis;		
- }}
+  {
+	return jjtThis;		
+ }
+}
 
 SimpleNode QuerySelect():
 {Token t;}
 {
   {
-    jjtThis.value = "";  }
+    jjtThis.value = "";
+  }
   < SELECT >
   (
-    ((< ALL >    {
-      jjtThis.value = "*";    })
-  |       (t = < QUERY_VAR >	    {		  jjtThis.value += t.image + " ";
+    ((< ALL >
+    {
+      jjtThis.value = "*";
+    })
+  | 
+      (t = < QUERY_VAR >
+	    {
+		  jjtThis.value += t.image + " ";
 		  lastQueryTable.put(t.image, "undefined");
 	    }
 	  )+
 	)
   )
   {
-    return jjtThis;  }}
+    return jjtThis;
+  }
+}
+
 SimpleNode QueryWhere():
 {}
 {
-  < WHERE ><OPEN2 >  WhereExpr()
-  (    < DOT >
+  < WHERE ><OPEN2 >
+  WhereExpr()
+  (
+    < DOT >
     WhereExpr()
   )*
   <CLOSE2 >
   {
-    return jjtThis;  }}
+    return jjtThis;
+  }
+}
 
 SimpleNode WhereExpr():
 {}
@@ -166,7 +264,9 @@ SimpleNode WhereExpr():
 	Relation()
 	RelationValue()
 	{
-	  return jjtThis;	}}
+	  return jjtThis;
+	}
+}
 
 SimpleNode RelationSubject():
 {Token t;}
@@ -181,29 +281,40 @@ SimpleNode RelationSubject():
                 lastQueryTable.put(t.image, "vertex");
             else if (Objects.equals(type, "undefined"))
                 lastQueryTable.replace(t.image, "vertex");
-    return jjtThis;  }}
+    return jjtThis;
+  }
+}
 
 SimpleNode Relation():
 {Token t1, t2;}
 {
 	(
-	  t1=< EDGE >		{
-		   lastRelation = "edge";		}
-	  | t1=< PROPERTY >		{
-		   lastRelation = "property";		}
+	  t1=< EDGE >
+		{
+		   lastRelation = "edge";
+		}
+	  | t1=< PROPERTY >
+		{
+		   lastRelation = "property";
+		}
 	  | t1=< PROPERTY_VALUE >
 		{
-		   lastRelation = "property_value";		}
+		   lastRelation = "property_value";
+		}
 	)
 	t2=< IDENTIFIER >
 	{
 	  jjtThis.value = t1.image + t2.image; 
-	  return jjtThis;	}
-}
+	  return jjtThis;
+	}
+}
+
 SimpleNode RelationValue():
 {Token t;}
 {
-  (    t = < QUERY_VAR >    {
+  (
+    t = < QUERY_VAR >
+    {
        String type = lastQueryTable.get(t.image);
                     if (Objects.equals(lastRelation, "property_value")) {
                         if (type == null)
@@ -230,12 +341,17 @@ SimpleNode RelationValue():
                             lastQueryTable.replace(t.image, "vertex");
                         else if (!Objects.equals(type, "vertex"))
                             throw new Error("Variable " + t.image + " has type " + type + " and is being used as vertex");
-                    }    }
+                    }
+    }
     |
-    t = < CONSTANT_VALUE >    {
+    t = < CONSTANT_VALUE >
+    {
        if (!Objects.equals(lastRelation, "property_value"))
-                        throw new Error("Constants can only be used as properties of vertices");    }
+                        throw new Error("Constants can only be used as properties of vertices");
+    }
   )
   {
     jjtThis.value = t.image;
-    return jjtThis;  }}
+    return jjtThis;
+  }
+}

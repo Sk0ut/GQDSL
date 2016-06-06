@@ -454,7 +454,7 @@ public class GqdslParser/*@bgen(jjtree)*/ implements GqdslParserTreeConstants, G
     }
 
     static final public SimpleNode RelationValue() throws ParseException {
- /*@bgen(jjtree) RelationValue */
+    /*@bgen(jjtree) RelationValue */
         SimpleNode jjtn000 = new SimpleNode(JJTRELATIONVALUE);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);

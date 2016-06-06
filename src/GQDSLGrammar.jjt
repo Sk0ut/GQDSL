@@ -3,20 +3,34 @@
  */options{  static = true;
   LOOKAHEAD = 1;}PARSER_BEGIN(GqdslParser)
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.Writer;
+import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 
-public class GqdslParser{  public static void main(String args [])  {
+public class GqdslParser{
+	private static List<Map<String, String>> symbolTables = new LinkedList<Map<String, String>>();
+    private static Map<String, String> lastQueryTable;
+    private static String lastRelation;
+    public static void main(String args [])  {
     String fileName = "Testes";
     try    {	  new GqdslParser(new FileInputStream(fileName));		
 	} catch (Exception e)	{
 	  e.printStackTrace();
 	  return;	}
-    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
+    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");
+      Writer writer = new PrintWriter(new FileOutputStream("TesteCompiled"));
+      n.compile(writer);    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
 
 < DEFAULT > TOKEN:{
 	< QUERY_START :  "QUERY" >: QUERY
-	//| < JAVA_LINE : (~["\n","\r"])*(["\n","\r"])+ >}
-
-< DEFAULT, QUERY, IN_BRACES > SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
+  | 	< JAVA_CODE : ~[] >}
+
+< QUERY, IN_BRACES > SKIP :{  " "| "\t"| "\n"| "\r"}
 
 < QUERY > MORE:{
   "\"" : STRING_BODY}
@@ -56,28 +70,37 @@ public class GqdslParser{  public static void main(String args [])  {
 {	< UNKNOWN: ~[] >
 }
  
-SimpleNode Start() :{}{ // JavaCode()
+SimpleNode Start() :{}{  JavaCode()
   (    Query()
+    JavaCode()
   )*
- // JavaCode()    {    return jjtThis;  }}
-/*
+  < EOF >  {    return jjtThis;  }}
+
 SimpleNode JavaCode() :
 {Token t;}
 {
   	{		jjtThis.value = "";
-  	}	(		t = < JAVA_LINE >
+  	}	(		t = < JAVA_CODE >
 	  	{
 	    	jjtThis.value += t.image;	  	}
-	)+
-	{		return jjtThis;
+	)*
+	{  		return jjtThis;
 	}
 }
-*/
+
 SimpleNode Query() :{}
 {
+  {
+     symbolTables.add(new HashMap<String, String>());
+     lastQueryTable = symbolTables.get(symbolTables.size() - 1);  }
   QueryHeader()
   QueryExpr()
-  {	return jjtThis;
+  {
+    for (Map.Entry<String, String> entry: lastQueryTable.entrySet()) {
+                if (Objects.equals(entry.getValue(), "undefined")) {
+                    throw new Error("Variable " + entry.getKey() + " cannot be left undefined at the end of query");
+                }
+            }	return jjtThis;
   }}
 
 void QueryHeader() #void :
@@ -117,6 +140,7 @@ SimpleNode QuerySelect():
     ((< ALL >    {
       jjtThis.value = "*";    })
   |       (t = < QUERY_VAR >	    {		  jjtThis.value += t.image + " ";
+		  lastQueryTable.put(t.image, "undefined");
 	    }
 	  )+
 	)
@@ -149,12 +173,27 @@ SimpleNode RelationSubject():
   t= < QUERY_VAR >
   {
     jjtThis.value = t.image;
+    String type = lastQueryTable.get(t.image);
+            if (Objects.equals(type, "value"))
+                throw new Error("Value cannot be used as left hand operand");
+            if (type == null)
+                lastQueryTable.put(t.image, "vertex");
+            else if (Objects.equals(type, "undefined"))
+                lastQueryTable.replace(t.image, "vertex");
     return jjtThis;  }}
 
 SimpleNode Relation():
 {Token t1, t2;}
 {
-	(t1=< EDGE > | t1=< PROPERTY > | t1=< PROPERTY_VALUE >)
+	(
+	  t1=< EDGE >		{
+		   lastRelation = "edge";		}
+	  | t1=< PROPERTY >		{
+		   lastRelation = "property";		}
+	  | t1=< PROPERTY_VALUE >
+		{
+		   lastRelation = "property_value";		}
+	)
 	t2=< IDENTIFIER >
 	{
 	  jjtThis.value = t1.image + t2.image; 
@@ -163,8 +202,38 @@ SimpleNode Relation():
 SimpleNode RelationValue():
 {Token t;}
 {
-  (    t = < QUERY_VAR > |
-    t = < CONSTANT_VALUE >
+  (    t = < QUERY_VAR >    {
+       String type = lastQueryTable.get(t.image);
+                    if (Objects.equals(lastRelation, "property_value")) {
+                        if (type == null)
+                            lastQueryTable.put(t.image, "value");
+                        else if (Objects.equals(type, "undefined"))
+                            lastQueryTable.replace(t.image, "value");
+                        else if (Objects.equals(type, "value"))
+                            throw new Error("Value of variable " + t.image + " cannot be redefined");
+                        else throw new Error("Variable " + t.image + " has type " + type + " and is being used as value");
+                         }
+                    else if (Objects.equals(lastRelation, "property")) {
+                        if (type == null)
+                            lastQueryTable.put(t.image, "property");
+                        else if (Objects.equals(type, "undefined"))
+                            lastQueryTable.replace(t.image, "property");
+                        else if (Objects.equals(type, "property"))
+                            throw new Error("Value of variable " + t.image + " cannot be redefined");
+                        else throw new Error("Variable " + t.image + " has type " + type + " and is being used as property");
+                    }
+                    else if (Objects.equals(lastRelation, "edge")) {
+                        if (type == null)
+                            lastQueryTable.put(t.image, "vertex");
+                        else if (Objects.equals(type, "undefined"))
+                            lastQueryTable.replace(t.image, "vertex");
+                        else if (!Objects.equals(type, "vertex"))
+                            throw new Error("Variable " + t.image + " has type " + type + " and is being used as vertex");
+                    }    }
+    |
+    t = < CONSTANT_VALUE >    {
+       if (!Objects.equals(lastRelation, "property_value"))
+                        throw new Error("Constants can only be used as properties of vertices");    }
   )
   {
     jjtThis.value = t.image;

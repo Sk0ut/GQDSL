@@ -4,6 +4,9 @@
    machinery for constructing the parent and child relationships
    between nodes. */
 
+import java.io.IOException;
+import java.io.Writer;
+
 public
 interface Node {
 
@@ -30,5 +33,7 @@ interface Node {
 
   /** Return the number of children the node has. */
   public int jjtGetNumChildren();
+  
+  public void compile(Writer writer) throws IOException;
 }
 /* JavaCC - OriginalChecksum=51a365986f30b3d8da41a4f7d049ee04 (do not edit this line) */

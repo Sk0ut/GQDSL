@@ -1,5 +1,5 @@
 // Display the name and age of all people in the database
-QUERY(graph, result1): SELECT ?name ?age WHERE {
+QUERY(graph, result1): SELECT * WHERE {
  ?person v:label "person" .
  ?person v:name ?name.
  ?person v:age ?age 
@@ -25,7 +25,7 @@ WHERE {
 }
 
 // This Will Fail!
-QUERY(graph, result3): SELECT ?c ?d
+	QUERY(graph, result3): SELECT ?c ?d
 WHERE {
   ?a v:name "daniel" .
   ?a p:location ?b .

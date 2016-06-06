@@ -4,6 +4,9 @@
  */options{  static = true;
   LOOKAHEAD = 1;}PARSER_BEGIN(GqdslParser)
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +26,9 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants/*@e
 	} catch (Exception e)	{
 	  e.printStackTrace();
 	  return;	}
-    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
+    try    {      SimpleNode n = GqdslParser.Start();      n.dump("");      System.out.println("File \"" + fileName + "\" is according to grammar.");
+      Writer writer = new PrintWriter(new FileOutputStream("TesteCompiled"));
+      n.compile(writer);    }    catch (Exception e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }  }}PARSER_END(GqdslParser)
 
 < DEFAULT > TOKEN:{
 	< QUERY_START :  "QUERY" >: QUERY

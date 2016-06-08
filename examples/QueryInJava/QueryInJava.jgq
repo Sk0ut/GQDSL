@@ -1,0 +1,29 @@
+public class QueryInJava {
+    public static void main(String[] args){
+        String filepath = "graph.rdf";
+
+        QUERY(filepath,result): SELECT * WHERE {
+            ?person v:name "pierre" .
+            ?person e:bought ?item .
+            ?item v:name ?itemName
+        }
+
+		for (int i = 0; i < result.size(); ++i) {
+			for (Var x : result.get(i).keySet()) {
+				System.out.println(x + " = " + FmtUtils.stringForNode(result.get(i).get(x)));
+			}
+		}
+		
+		QUERY(filepath,result2): SELECT ?name WHERE {
+            ?person e:bought ?item .
+            ?item v:name "arduino" .
+            ?person v:name ?name
+        }
+
+		for (int i = 0; i < result2.size(); ++i) {
+			for (Var x : result2.get(i).keySet()) {
+				System.out.println(x + " = " + FmtUtils.stringForNode(result2.get(i).get(x)));
+			}
+		}
+    }
+}

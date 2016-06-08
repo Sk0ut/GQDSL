@@ -1,0 +1,8 @@
+// This Will Fail!
+QUERY(graph, result3): SELECT ?c ?d ?e
+WHERE {
+  ?a v:name "daniel" .
+  ?a p:location ?b .
+  ?b v:value ?c .
+  ?b v:startTime ?d
+}

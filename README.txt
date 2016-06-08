@@ -1,10 +1,10 @@
 **PROJECT TITLE: GQDSL
 **GROUP: 3MIEIC01
-NAME1: Afonso Castro, NR1: up201304205, GRADE1: <0 to 20 value>, CONTRIBUTION: <0 to 100 %>
-NAME2: Ângela Cardoso, NR2: up200204375, GRADE2: <0 to 20 value>, CONTRIBUTION: <0 to 100 %>
-NAME3: Flávio Couto, NR3: up201303726, GRADE3: <0 to 20 value>, CONTRIBUTION: <0 to 100 %>
-NAME4: Nuno Valente, NR4: up200204376, GRADE4: <0 to 20 value>, CONTRIBUTION: <0 to 100 %>
-NAME5: Pedro Castro, NR5: up201305337, GRADE5: <0 to 20 value>, CONTRIBUTION: <0 to 100 %>
+NAME1: Afonso Castro, NR1: up201304205, GRADE1: <18 to 20 value>, CONTRIBUTION: <20 to 100 %>
+NAME2: Ângela Cardoso, NR2: up200204375, GRADE2: <18 to 20 value>, CONTRIBUTION: <20 to 100 %>
+NAME3: Flávio Couto, NR3: up201303726, GRADE3: <18 to 20 value>, CONTRIBUTION: <20 to 100 %>
+NAME4: Nuno Valente, NR4: up200204376, GRADE4: <18 to 20 value>, CONTRIBUTION: <20 to 100 %>
+NAME5: Pedro Castro, NR5: up201305337, GRADE5: <18 to 20 value>, CONTRIBUTION: <20 to 100 %>
 
 
 **SUMMARY: Our DSL is a graph query language based in sparql (a graph query language somewhat similar to SQL). Given a java file with graph queries writen in our DSL, our tool writes the necessary code to load the graph, execute the query and list the results.
@@ -50,18 +50,25 @@ NAME5: Pedro Castro, NR5: up201305337, GRADE5: <0 to 20 value>, CONTRIBUTION: <0
 
 
 **TASK DISTRIBUTION:
-- project specification:
-- DSL lexical analysis:
-- DSL syntactical analysis:
-- DSL semantical analysis:
-- AST construction:
-- code generation:
-- testing:
-- tool interaction:
-- technical investigation (SPARQL, Gremlin, Apache Jena, RDF, javacc): Afonso
+- project specification;
+- DSL lexical analysis;
+- DSL syntactical analysis;
+- DSL semantical analysis;
+- AST construction;
+- code generation;
+- testing;
+- tool interaction;
+- technical investigation (SPARQL, Gremlin, Apache Jena, RDF, javacc).
+
+Every element of the group contributed to most of the task listed above,
+with some exceptions not necessary to discriminate.
 
 
-**PROS: Our tool allows users to write graph queries in a more human friendly language than Gremlin. These queries can be inserted into any java code file for processing.
+**PROS:
+Our tool allows users to write quick graph queries.
+These queries can be inserted into any java code file for processing.
 
-
-**CONS: Our DSL only recognizes a subset of the SPARQL DSL. We where not able to test the property function of our DSL, because we could not generate an appropriate graph.
+**CONS:
+Our DSL only recognizes a subset of the SPARQL DSL.
+We were not able to test the property function of our DSL, because we could not generate an appropriate graph.
+The application lacks automated testing.

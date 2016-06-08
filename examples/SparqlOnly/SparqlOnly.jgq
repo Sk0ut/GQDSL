@@ -1,0 +1,4 @@
+QUERY(graph, result1): SELECT ?name WHERE {
+ ?person v:label "person" .
+ ?person v:name ?name
+}

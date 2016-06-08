@@ -1,0 +1,40 @@
+<rdf:RDF
+  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns:v='http://www.tinkerpop.com/traversal/value#'
+  xmlns:e='http://www.tinkerpop.com/traversal/edge#'
+  xmlns:p='http://www.tinkerpop.com/traversal/property#'
+ >
+  <rdf:Description rdf:nodeID="1">
+    <e:knows rdf:nodeID="2"/>
+    <e:knows rdf:nodeID="8"/>
+    <e:bought rdf:nodeID="4"/>
+    <e:bought rdf:nodeID="5"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="2">
+    <v:name>pierre</v:name>
+    <e:bought rdf:nodeID="3"/>
+    <e:bought rdf:nodeID="4"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="3">
+    <v:name>fpga</v:name>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="4">
+    <v:name>tether</v:name>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="5">
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="6">
+    <e:knows rdf:nodeID="8"/>
+    <e:bought rdf:nodeID="7"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="7">
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="8">
+    <v:name>peter</v:name>
+    <e:bought rdf:nodeID="9"/>
+    <e:knows rdf:nodeID="2"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="9">
+    <v:name>arduino</v:name>
+  </rdf:Description>
+</rdf:RDF>

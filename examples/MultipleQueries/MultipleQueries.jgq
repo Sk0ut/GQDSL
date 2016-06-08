@@ -1,0 +1,25 @@
+// Display the name and age of all people in the database
+QUERY(graph, result1): SELECT * WHERE {
+ ?person v:label "person" .
+ ?person v:name ?name.
+ ?person v:age ?age 
+}
+
+// Display the name of all projects created by people Daniel knows.
+QUERY(graph, result2): SELECT ?name ?projectName
+WHERE {
+  ?daniel v:label "person" .
+  ?daniel v:name "Daniel".
+  ?daniel e:knows ?person .
+  ?person v:name ?name.
+  ?person e:created ?project .
+  ?project v:name ?projectName
+}
+
+QUERY(graph, result3): SELECT ?c ?d
+WHERE {
+  ?a v:name "daniel" .
+  ?a p:location ?b .
+  ?b v:value ?c .
+  ?b v:startTime ?d
+}

@@ -16,18 +16,29 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
 
   public static void main(String args [])
   {
-
-    if(args.length != 1){
-        System.out.println("USAGE: " + GqdslParser.class.getName() + " <fileName>");
+     if(!( 1 <= args.length && args.length <= 2)){
+        System.out.println("USAGE: " + GqdslParser.class.getName() + " <fileName> [-v]");
         return;
-    }
+     }
 
-    String fileName = args[0];
+     String fileName = args[0];
 
-      if(!fileName.substring(fileName.lastIndexOf('.'), fileName.length()).equals(".jgq")){
-          System.out.println("The file provided must have the .jgq extension");
-          return;
-      }
+     if(!fileName.substring(fileName.lastIndexOf('.'), fileName.length()).equals(".jgq")){
+         System.out.println("The file provided must have the .jgq extension");
+         return;
+     }
+
+        boolean verbose = false;
+     if (args.length == 2) {
+       if (Objects.equals(args[1], "-v")) {
+                        verbose = true;
+       }
+       else
+       {
+        System.out.println("USAGE: " + GqdslParser.class.getName() + " <fileName> [-v]");
+         return;
+       }
+     }
 
     try
     {
@@ -41,15 +52,19 @@ public class GqdslParser/*@bgen(jjtree)*/implements GqdslParserTreeConstants, Gq
     try
     {
       SimpleNode n = GqdslParser.Start();
-      n.dump("");
+        if (verbose)
+        {
+          n.dump("");
+        }
       System.out.println("File \u005c"" + fileName + "\u005c" is according to grammar.");
-      Writer writer = new PrintWriter(new FileOutputStream(fileName + fileName.substring(0, fileName.lastIndexOf('.')) + ".java"));
+      Writer writer = new PrintWriter(new FileOutputStream(fileName.substring(0, fileName.lastIndexOf('.')) + ".java"));
       n.compile(writer);
       writer.close();
+      System.out.println("File \u005c"" + fileName + "\u005c" compiled.");
     }
     catch (Exception e)
     {
-      System.out.println("Oops.");
+      System.out.println("Failed to compile.");
       System.out.println(e.getMessage());
     }
   }
